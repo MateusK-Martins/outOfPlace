@@ -18,7 +18,7 @@ int main(void) {
 	
 	const char *key = "N4X";              
 	
-	const char accent[] = "áàâãäåÁÀÂÃÄÅéèêëÉÈÊËíìîïÍÌÎÏóòôõöÓÒÔÕÖúùûüÚÙÛÜçÇñÑ";
+	const char accent[] = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
 	const char clean[]  = "aaaaaaAAAAAAeeeeEEEEiiiiIIIIoooooOOOOOuuuuUUUUcCnN";
 
     char table[256] = {0};
@@ -46,7 +46,7 @@ int main(void) {
  
 	while (1) {
 		printf("\033[36m Escreva \"%s\" e \"E\" para sair. \033[0m\n\n", key);
-		printf("\033[31m ESTA AÇAO IRÁ DELETAR O ÚLTIMO DADO COPIADO!!!\033[0m\n\n		");
+		printf("\033[31m ESTA Aï¿½AO IRï¿½ DELETAR O ï¿½LTIMO DADO COPIADO!!!\033[0m\n\n		");
 
 		char line[32];  
 		if (fgets(line, sizeof(line), stdin) != NULL) {
@@ -74,7 +74,7 @@ int main(void) {
 					size_t len = strlen(text) + 1;
 					char *copy = (char*)malloc(len);
 					if (!copy) {
-						printf("Erro de memória\n");
+						printf("Erro de memï¿½ria\n");
 						GlobalUnlock(hData);
 						CloseClipboard();
 						return 1;
@@ -114,4 +114,5 @@ void accentRemover(const char *table, char *str){
 }
 
 //gcc remover.c -o r.exe -luser32 -lkernel32
+//x86_64-w64-mingw32-gcc remover.c -o r.exe -luser32 -lkernel32
 //chcp 28592
