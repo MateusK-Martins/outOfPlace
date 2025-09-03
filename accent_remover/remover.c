@@ -106,7 +106,7 @@ int main(void) {
 
 void accentRemover(const char *table, char *str){
 	for (int i = 0; str[i] != '\0'; i++) {
-		printf(" %d->", c);
+		unsigned char c = str[i];
         if (table[c] != 0) {
             str[i] = table[c];
         }
