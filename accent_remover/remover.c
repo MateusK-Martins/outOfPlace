@@ -18,8 +18,8 @@ int main(void) {
 	
 	const char *key = "N4X";              
 	
-	const char accent[] = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
-	const char clean[]  = "aaaaaaAAAAAAeeeeEEEEiiiiIIIIoooooOOOOOuuuuUUUUcCnN";
+	const char accent[] = "áéíóúäëïöüàèìòùãõâêîôûçñÁÉÍÓÚÄËÏÖÜÀÈÌÒÙÃÕÂÊÎÔÛÇÑ ";
+	const char clean[]  = "aeiouaeiouaeiouaoaeioucnAEIOUAEIOUAEIOUAOAEIOUCN ";
 
     char table[256] = {0};
 
@@ -39,14 +39,14 @@ int main(void) {
 
     int n = sizeof(title)/sizeof(title[0]);
     for (int i = 0; i < n; i++) {
-        printf("\033[32m %s\n \033[0m", title[i]);
+        printf("%s\n", title[i]);
     }
 	
 	printf("\n\n");
  
 	while (1) {
-		printf("\033[36m Escreva \"%s\" e \"E\" para sair. \033[0m\n\n", key);
-		printf("\033[31m ESTA Aï¿½AO IRï¿½ DELETAR O ï¿½LTIMO DADO COPIADO!!!\033[0m\n\n		");
+		printf("Escreva \"%s\" e \"E\" para sair. \n\n", key);
+		printf("ESTA AÇ?O IRÁ DELETAR O ÚLTIMO DADO COPIADO!!!\n\n		");
 
 		char line[32];  
 		if (fgets(line, sizeof(line), stdin) != NULL) {
@@ -93,12 +93,13 @@ int main(void) {
 					SetClipboardData(CF_TEXT, hMem);
 
 					free(copy); 
+
+					printf(" Success! \n\n");	
+					printf(" <============================ ============================> \n\n");	
 				}
 			}
 			CloseClipboard();
-		}
-		printf("\033[32m Success! \033[0m \n\n");	
-		printf("\033[34m <============================ ============================> \033[0m \n\n");		
+		}	
     }
 
     return 0;
