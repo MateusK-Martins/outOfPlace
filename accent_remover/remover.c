@@ -109,10 +109,13 @@ void textFormater(char *str) {
         }
 
         // Skip "NULL"
-        if (c == 'N' && strncmp(&str[i], "NULL", 4) == 0) {
-            i += 4;
-            continue;
-        }
+        if (toupper(str[i]) == 'N' &&
+			toupper(str[i+1]) == 'U' &&
+			toupper(str[i+2]) == 'L' &&
+			toupper(str[i+3]) == 'L') {
+			i += 4; 
+			continue;
+		}
 
         // Copy valid character
         str[j++] = c;
