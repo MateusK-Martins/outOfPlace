@@ -4,36 +4,18 @@
 #include <ctype.h>
 #include <windows.h>
 
-#define LENGTH 84
+void accentRemover(char *str);
+void textFormater(char *str);
 
-void accentRemover(const char *table, char *str);
-
-int main(void) {
-	if (!SetConsoleCP(28592)) {
-        printf("Erro ao mudar input code page.\n");
-    }
-    if (!SetConsoleOutputCP(28592)) {
-        printf("Erro ao mudar output code page.\n");
-    }
-	
-	const char *key = "N4X";              
-	
-	const char accent[] = "áéíóúäëïöüàèìòùãõâêîôûçñÁÉÍÓÚÄËÏÖÜÀÈÌÒÙÃÕÂÊÎÔÛÇÑ ";
-	const char clean[]  = "aeiouaeiouaeiouaoaeioucnAEIOUAEIOUAEIOUAOAEIOUCN ";
-
-    char table[256] = {0};
-
-    for (int i = 0; i < LENGTH; i++) {
-        table[(unsigned char)accent[i]] = clean[i];
-    }
-	
+int main(void) {  
+	SetConsoleOutputCP(1252);        
 	unsigned char c;
-	
+
 	const char *title[] = {
-		"____ ____ ____ ____ _  _ ___       ____ ____ _  _ ____ _  _ ____ ____",
-		"|__| |    |    |___ |\\ |  |  __ __ |__/ |___ |\\/| |  | |  | |___ |__/", 
-		"|  | |___ |___ |___ | \\|  |        |  \\ |___ |  | |__|  \\/  |___ |  \\"
-	};
+		"_______  _____   ______ _______ _______ _______ _______ ______   _____   ______ ",
+		"|______ |     | |_____/ |  |  | |_____|    |    |_____| |     \\ |     | |_____/",
+		"|       |_____| |    \\_ |  |  | |     |    |    |     | |_____/ |_____| |    \\_ "
+	}; 
 
 	printf("\n\n");
 
@@ -45,24 +27,21 @@ int main(void) {
 	printf("\n\n");
  
 	while (1) {
-		printf("Escreva \"%s\" e \"E\" para sair. \n\n", key);
-		printf("ESTA AÇ?O IRÁ DELETAR O ÚLTIMO DADO COPIADO!!!\n\n		");
+		printf("\tNecessario que o texto a ser filtrado esteja usando encoding ANSI ou CP1252!!!\n\n");
+		printf("\tlista:\n\t\t(a)-Filtrar acentos\n\t\t(f)-Fast Format\n\t\t(i)-Info\n\t\t(s)-Sair\n\n");
+		printf("\tAS ACOES IRAO SOBREESCREVER O ULTIMO DADO COPIADO!!!\n\n		");
 
 		char line[32];  
 		if (fgets(line, sizeof(line), stdin) != NULL) {
 			c = line[0];  // primeiro caractere
 		}
 		
-		line[strcspn(line, "\n")] = '\0';
-		
-		if (strcasecmp(line, "E") == 0) {
+		if (toupper(c) == 'S') {
             break;
-        } else if (strcasecmp(line, key) == 0) {
-            printf("\n Senha correta, continuando...\n");
-        } else {
-            printf("\n Senha incorreta!\n");
-			continue;
-        }
+        } else if (toupper(c) == 'I') {
+			printf("\n\tINFORMACOES\n\t\tFiltrar acentos: torna caracteres acentuados em suas versoes sem acentos;\n\t\tFast Format: deleta[\'], deleta[\"], deleta[;], deleta[,], deleta[NULL], [|]subistituido por[,] \n\n\n");
+			continue;	
+		}
 		
 		printf("\n");
 		
@@ -74,7 +53,7 @@ int main(void) {
 					size_t len = strlen(text) + 1;
 					char *copy = (char*)malloc(len);
 					if (!copy) {
-						printf("Erro de memï¿½ria\n");
+						printf("Erro de memÄÅ¼Ëria\n");
 						GlobalUnlock(hData);
 						CloseClipboard();
 						return 1;
@@ -82,8 +61,12 @@ int main(void) {
 
 					strcpy(copy, text);         
 					GlobalUnlock(hData);         
-
-					accentRemover(table, copy);  
+					
+					if (toupper(c) == 'A') {
+						accentRemover(copy);  
+					} else if (toupper(c) == 'F') {
+						textFormater(copy);
+					}
 
 					HANDLE hMem = GlobalAlloc(GMEM_MOVEABLE, len);
 					memcpy(GlobalLock(hMem), copy, len);
@@ -94,8 +77,8 @@ int main(void) {
 
 					free(copy); 
 
-					printf(" Success! \n\n");	
-					printf(" <============================ ============================> \n\n");	
+					printf("\t\t\t\tSuccess! \n\n");	
+					printf("======================================================================== \n\n");	
 				}
 			}
 			CloseClipboard();
@@ -105,13 +88,79 @@ int main(void) {
     return 0;
 }
 
-void accentRemover(const char *table, char *str){
-	for (int i = 0; str[i] != '\0'; i++) {
-		unsigned char c = str[i];
-        if (table[c] != 0) {
-            str[i] = table[c];
+void textFormater(char *str) {
+    int i = 0, j = 0;  // i = read index, j = write index
+    int len = strlen(str);
+
+    while (str[i] != '\0') {
+        char c = toupper(str[i]);
+
+        // Skip unwanted characters
+        if (c == '\'' || c == '\"' || c == ',' || c == ';') {
+            i++;
+            continue;
         }
-	}
+
+        // Replace | with ,
+        if (c == '|') {
+            str[j++] = ',';
+            i++;
+            continue;
+        }
+
+        // Skip "NULL"
+        if (c == 'N' && strncmp(&str[i], "NULL", 4) == 0) {
+            i += 4;
+            continue;
+        }
+
+        // Copy valid character
+        str[j++] = c;
+        i++;
+    }
+
+    str[j] = '\0';
+}
+
+void accentRemover(char *str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char c = str[i];
+
+        // Lowercase
+        if (c >= 0xE0 && c <= 0xE5) {      // Ã  Ã¡ Ã¢ Ã£ Ã¤ Ã¥
+            str[i] = 'a';
+        } else if (c >= 0xE8 && c <= 0xEB) { // Ã¨ Ã© Ãª Ã«
+            str[i] = 'e';
+        } else if (c >= 0xEC && c <= 0xEF) { // Ã¬ Ã­ Ã® Ã¯
+            str[i] = 'i';
+        } else if (c >= 0xF2 && c <= 0xF6) { // Ã² Ã³ Ã´ Ãµ Ã¶
+            str[i] = 'o';
+        } else if (c >= 0xF9 && c <= 0xFC) { // Ã¹ Ãº Ã» Ã¼
+            str[i] = 'u';
+        } 
+        // Uppercase
+        else if (c >= 0xC0 && c <= 0xC5) { // Ã€ Ã Ã‚ Ãƒ Ã„ Ã…
+            str[i] = 'A';
+        } else if (c >= 0xC8 && c <= 0xCB) { // Ãˆ Ã‰ ÃŠ Ã‹
+            str[i] = 'E';
+        } else if (c >= 0xCC && c <= 0xCF) { // ÃŒ Ã Ã Ã
+            str[i] = 'I';
+        } else if (c >= 0xD2 && c <= 0xD6) { // Ã’ Ã“ Ã” Ã• Ã–
+            str[i] = 'O';
+        } else if (c >= 0xD9 && c <= 0xDC) { // Ã™ Ãš Ã› Ãœ
+            str[i] = 'U';
+        }
+        // Special characters
+        else if (c == 0xC7) { // Ã‡
+            str[i] = 'C';
+        } else if (c == 0xE7) { // Ã§
+            str[i] = 'c';
+        } else if (c == 0xD1) { // Ã±
+            str[i] = 'N';
+        } else if (c == 0xF1) { // Ã±
+            str[i] = 'n';
+        }
+    }
 }
 
 //gcc remover.c -o r.exe -luser32 -lkernel32
