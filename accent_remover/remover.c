@@ -41,50 +41,47 @@ int main(void) {
         } else if (toupper(c) == 'I') {
 			printf("\n\tINFORMACOES\n\t\tFiltrar acentos: torna caracteres acentuados em suas versoes sem acentos;\n\t\tFast Format: deleta[\'], deleta[\"], deleta[;], deleta[,], deleta[NULL], [|]subistituido por[,] \n\n\n");
 			continue;	
-		}
-		
-		printf("\n");
-		
-		if (OpenClipboard(NULL)) {
-			HANDLE hData = GetClipboardData(CF_TEXT);
-			if (hData != NULL) {
-				char *text = (char*)GlobalLock(hData);
-				if (text != NULL) {
-					size_t len = strlen(text) + 1;
-					char *copy = (char*)malloc(len);
-					if (!copy) {
-						printf("Erro de memďż˝ria\n");
-						GlobalUnlock(hData);
-						CloseClipboard();
-						return 1;
-					}
+		} 
+        printf("\n");
+        if (OpenClipboard(NULL)) {
+            HANDLE hData = GetClipboardData(CF_TEXT);
+            if (hData != NULL) {
+                char *text = (char*)GlobalLock(hData);
+                if (text != NULL) {
+                    size_t len = strlen(text) + 1;
+                    char *copy = (char*)malloc(len);
+                    if (!copy) {
+                        printf("Erro de memoria\n");
+                        GlobalUnlock(hData);
+                        CloseClipboard();
+                        return 1;
+                    }
 
-					strcpy(copy, text);         
-					GlobalUnlock(hData);         
-					
-					if (toupper(c) == 'A') {
-						accentRemover(copy);  
-					} else if (toupper(c) == 'F') {
-						textFormater(copy);
-					}
+                    strcpy(copy, text);         
+                    GlobalUnlock(hData);         
+                    
+                    if (toupper(c) == 'A') {
+                        accentRemover(copy);  
+                    } else if (toupper(c) == 'F') {
+                        textFormater(copy);
+                    }
 
-					HANDLE hMem = GlobalAlloc(GMEM_MOVEABLE, len);
-					memcpy(GlobalLock(hMem), copy, len);
-					GlobalUnlock(hMem);
+                    HANDLE hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+                    memcpy(GlobalLock(hMem), copy, len);
+                    GlobalUnlock(hMem);
 
-					EmptyClipboard();
-					SetClipboardData(CF_TEXT, hMem);
+                    EmptyClipboard();
+                    SetClipboardData(CF_TEXT, hMem);
 
-					free(copy); 
+                    free(copy); 
 
-					printf("\t\t\t\tSuccess! \n\n");	
-					printf("======================================================================== \n\n");	
-				}
-			}
-			CloseClipboard();
-		}	
+                    printf("\t\t\t\tSuccess! \n\n");	
+                    printf("======================================================================== \n\n");	
+                }
+            }
+            CloseClipboard();
+        }	
     }
-
     return 0;
 }
 
